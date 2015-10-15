@@ -5,15 +5,130 @@ html,
 body {
   height: 100%;
   width: 100%;
-  overflow: hidden; }
+  margin: 0; }
 
 body {
-  font: 17px / 27px 'Courier New';
+  font: 17px / 27px 'Muli', sans-serif;
   font-weight: bold;
   background-attachment: fixed;
   backface-visibility: hidden; }
 
-.clearfix:after {
+.side-bar {
+  float: left;
+  width: 240px;
+  height: 100vh;
+  padding: 20px;
+  background-color: #e9e9ec; }
+
+.header {
+  width: 100%;
+  padding: 20px;
+  border-bottom: 1px solid #e9e9ec; }
+
+.deck-lockup {
+  float: left; }
+  .deck-lockup .deck-portrait {
+    float: left;
+    height: 63px;
+    width: 62px;
+    overflow: hidden;
+    background-image: url(../assets/images/class-icons.png); }
+  .deck-lockup .deck-name {
+    float: left;
+    margin-left: 10px; }
+
+.deck-stats {
+  float: left;
+  list-style: none; }
+  .deck-stats li {
+    float: left; }
+    .deck-stats li + li {
+      margin-left: 20px; }
+  .deck-stats .played:before {
+    content: "Played: "; }
+  .deck-stats .wins:before {
+    content: "Wins: "; }
+  .deck-stats .losses:before {
+    content: "Losses: "; }
+  .deck-stats .winrate:before {
+    content: "Winrate: "; }
+
+.deck-list {
+  list-style: none;
+  padding: 0; }
+
+.main-container {
+  float: left;
+  width: calc(100% - 240px); }
+
+.deck-winrates {
+  float: left;
+  width: 70%;
+  height: 300px; }
+  .deck-winrates .class-breakdown {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none; }
+  .deck-winrates .class-breakdown li {
+    -webkit-flex: 1 0 0;
+    flex: 1 0 0;
+    height: inherit;
+    border-right: 1px solid #e9e9ec; }
+
+.deck-cardlist {
+  float: left;
+  width: 30%; }
+
+.deck-cards {
+  list-style: none; }
+  .deck-cards .basic {
+    color: #4b4d58; }
+  .deck-cards .common {
+    color: #61DB7B; }
+  .deck-cards .rare {
+    color: #4E5AEA; }
+  .deck-cards .epic {
+    color: #B444D8; }
+  .deck-cards .legendary {
+    color: #D89444; }
+
+.clearfix:after, .side-bar:after, .header:after, .deck-lockup:after, .deck-stats:after, .main-container:after, .deck-winrates:after, .deck-winrates .class-breakdown:after, .deck-cardlist:after {
   content: "";
   display: table;
   clear: both; }
+
+.flex-horizontal, .deck-winrates .class-breakdown {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-direction: row;
+  flex-direction: row;
+  -webkit-align-items: flex-start;
+  align-items: flex-start; }
+
+.druid {
+  background-position: 0 -441px; }
+
+.hunter {
+  background-position: 0 -126px; }
+
+.mage {
+  background-position: 0 -378px; }
+
+.paladin {
+  background-position: 0 -315px; }
+
+.priest {
+  background-position: 0 -252px; }
+
+.rogue {
+  background-position: 0 -189px; }
+
+.shaman {
+  background-position: 0 -504px; }
+
+.warrior {
+  background-position: 0 -63px; }
+
+.warlock {
+  background-position: 0 0; }

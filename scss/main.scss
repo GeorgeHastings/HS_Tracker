@@ -1,20 +1,150 @@
+$gray: #7B7D8E;
+$lightestgray: lighten($gray, 40%);
+$lightgray: lighten($gray, 20%);
+$darkgray: darken($gray, 10%);
+$darkestgray: darken($gray, 20%);
+
+$green: #61DB7B;
+$blue: #4E5AEA;
+$purple: #B444D8;
+$orange: #D89444;
+
 * {box-sizing: border-box;}
 
 html,
 body {
 	height: 100%;
 	width: 100%;
-	overflow: hidden;
+  margin: 0;
+	// overflow: hidden;
 }
 
 body {
-	font: 17px / 27px 'Courier New';
+	font: 17px / 27px 'Muli', sans-serif;
 	font-weight: bold;
 	background-attachment: fixed;
 	backface-visibility: hidden;
 }
 
+.side-bar {
+  float: left;
+  width: 240px;
+  height: 100vh;
+  padding: 20px;
+  background-color: $lightestgray;
+  @extend .clearfix;
+}
 
+.header {
+  width: 100%;
+  padding: 20px;
+  // height: 80px;
+  border-bottom: 1px solid $lightestgray;
+  @extend .clearfix;
+}
+
+.deck-lockup {
+  float: left;
+  @extend .clearfix;
+
+  .deck-portrait {
+    float: left;
+    height: 63px;
+    width: 62px;
+    overflow: hidden;
+    background-image: url(../assets/images/class-icons.png);
+  }
+  .deck-name {
+    float: left;
+    margin-left: 10px;
+  }
+}
+
+.deck-stats {
+  float: left;
+  list-style: none;
+  @extend .clearfix;
+
+  li {
+    float: left;
+    
+    & + li {
+      margin-left: 20px;
+    }
+  }
+
+  .played:before {
+    content: "Played: ";
+  }
+  .wins:before {
+    content: "Wins: ";
+  }
+  .losses:before {
+    content: "Losses: ";
+  }
+  .winrate:before {
+    content: "Winrate: ";
+  }
+}
+
+.deck-list {
+  list-style: none;
+  padding: 0;
+}
+
+.main-container {
+  float: left;
+  width: calc(100% - 240px);
+  @extend .clearfix;
+}
+
+.deck-winrates {
+  float: left;
+  width: 70%;
+  height: 300px;
+  @extend .clearfix;
+  
+  .class-breakdown {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    @extend .flex-horizontal;
+    @extend .clearfix;
+  }
+
+  .class-breakdown li {
+    -webkit-flex: 1 0 0; 
+     flex: 1 0 0;
+    height: inherit;
+    border-right: 1px solid $lightestgray;
+  }
+}
+.deck-cardlist {
+  float: left;
+  width: 30%;
+  @extend .clearfix;
+}
+
+.deck-cards {
+  list-style: none;
+
+  .basic {
+    color: $darkestgray;
+  }
+  .common {
+    color: $green;
+  }
+  .rare {
+    color: $blue;
+  }
+  .epic {
+    color: $purple;
+  }
+  .legendary {
+    color: $orange;
+  }
+}
 
 .clearfix {
   &:after {
@@ -22,4 +152,49 @@ body {
     display: table;
     clear: both;
   }
+}
+
+.flex-horizontal {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-direction: row; 
+  flex-direction: row;
+  -webkit-align-items: flex-start;
+  align-items: flex-start;
+}
+
+.druid {
+  background-position: 0 -441px;
+}
+
+.hunter {
+  background-position: 0 -126px;
+}
+
+.mage {
+  background-position: 0 -378px;
+}
+
+.paladin {
+  background-position: 0 -315px;
+}
+
+.priest {
+  background-position: 0 -252px;
+}
+
+.rogue {
+  background-position: 0 -189px;
+}
+
+.shaman {
+  background-position: 0 -504px;
+}
+
+.warrior {
+  background-position: 0 -63px;
+}
+
+.warlock {
+  background-position: 0 0;
 }
