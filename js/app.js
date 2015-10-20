@@ -20,16 +20,31 @@ var UI = {
 	}
 };
 
-function getCard(callback){
-  var c = new XMLHttpRequest;
-  c.onload = callback;
-  c.open('GET', 'data.json');
-  c.send();
-}
-
-var returnCard = function(data) {
-	var obj = JSON.parse(data);
-	console.log(obj.cards);
+var Card = {
+	toFind: '',
+	isMatch: function(obj) {
+		for(var i = 0; i < obj.length; i++) {
+			if(obj[i].name === Card.toFind) {
+				console.log(obj[i]);
+				return obj[i];
+			}
+		}
+	},
+	getJSON: function(callback){
+	  var c = new XMLHttpRequest;
+	  c.onload = callback;
+	  c.open('GET', 'data.json');
+	  c.send();
+	},
+	returnCard: function(data) {
+		var resp = data.target.responseText;
+		var obj = JSON.parse(resp);
+		Card.isMatch(obj.cards);
+	},
+	getCard: function(card) {
+		this.toFind = card;
+		Card.getJSON(Card.returnCard);
+	}
 };
 
 var createNewDeck = function(){	
@@ -105,5 +120,5 @@ var renderDeckList = function(results) {
 	}
 };
 
-getCard(returnCard);
+Card.getCard('Mad Bomber');
 pullDeckList();
