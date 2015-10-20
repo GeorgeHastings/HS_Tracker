@@ -118,18 +118,6 @@ h4 {
 .main-container {
   float: left;
   width: calc(100% - 240px); }
-  .main-container:before {
-    content: url(../assets/images/preloader.gif);
-    position: absolute;
-    top: 0;
-    left: 240px;
-    width: inherit;
-    height: 100%;
-    padding-top: 45vh;
-    text-align: center;
-    background-color: #fff;
-    opacity: 0;
-    transition: opacity 0.15s ease; }
   .main-container.loading:before {
     opacity: 1; }
 

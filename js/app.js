@@ -1,6 +1,7 @@
 'use strict';
 
 var UI = {
+	cardSearch: document.getElementById('cardSearch'),
 	loadBar: document.querySelector('.load-bar'),
 	deckList: document.querySelector('.deck-list'),
 	cardList: document.querySelector('.deck-cards'),
@@ -120,5 +121,14 @@ var renderDeckList = function(results) {
 	}
 };
 
-Card.getCard('Mad Bomber');
+var searchCards = function() {
+	var query = UI.cardSearch.value;
+	console.log(query);
+	Card.getCard(query);
+};
+
+UI.cardSearch.addEventListener('keyup', function() {
+	searchCards();
+});
+
 pullDeckList();

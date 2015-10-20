@@ -176,20 +176,6 @@ h4 {
   width: calc(100% - 240px);
   @extend .clearfix;
 
-  &:before {
-    content: url(../assets/images/preloader.gif);
-    position: absolute;
-    top: 0;
-    left: 240px;
-    width: inherit;
-    height: 100%;
-    padding-top: 45vh;
-    text-align: center;
-    background-color: #fff;
-    opacity: 0;
-    transition: opacity 0.15s ease;
-  }
-
   &.loading:before {
     opacity: 1;
   }
