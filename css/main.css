@@ -2,32 +2,88 @@
   box-sizing: border-box; }
 
 html,
-body {
+body,
+.wrapper {
   height: 100%;
   width: 100%;
-  margin: 0; }
+  margin: 0;
+  overflow: hidden; }
 
 body {
-  font: 17px / 27px 'Muli', sans-serif;
-  font-weight: bold;
+  font: 16px / 27px 'Fira Sans', sans-serif;
+  font-weight: 300;
   background-attachment: fixed;
   backface-visibility: hidden; }
+
+.load-bar {
+  width: 0%;
+  height: 3px;
+  background-color: #000;
+  backface-visibility: hidden; }
+  .load-bar.loading {
+    opacity: 1;
+    animation: load 4s cubic-bezier(1, 0, 0, 1); }
+  .load-bar.loaded {
+    width: 100%;
+    opacity: 0;
+    transition: width 0.2s cubic-bezier(1, 0, 0, 1), opacity 0.2s cubic-bezier(1, 0, 0, 1) 0.2s; }
+
+@keyframes load {
+  0% {
+    width: 0%; }
+  20% {
+    width: 25%; }
+  40% {
+    width: 40%; }
+  60% {
+    width: 70%; }
+  80% {
+    width: 75%; }
+  100% {
+    width: 100%; } }
+h3 {
+  font-size: 1em;
+  font-weight: normal; }
+
+h4 {
+  font-size: 0.8em;
+  font-weight: 500;
+  margin-bottom: 0; }
 
 .side-bar {
   float: left;
   width: 240px;
   height: 100vh;
   padding: 20px;
-  background-color: #e9e9ec; }
+  border-right: 1px solid #e9e9ec; }
+
+.logo {
+  font-weight: bold;
+  margin-bottom: 20px; }
+
+.btn {
+  color: #3399FF;
+  cursor: pointer; }
+  .btn:hover {
+    text-decoration: underline; }
+
+.deck-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 10px; }
+  .deck-list li {
+    cursor: pointer;
+    color: #AAA; }
+    .deck-list li:hover {
+      text-decoration: underline; }
 
 .header {
   width: 100%;
-  padding: 20px;
-  border-bottom: 1px solid #e9e9ec; }
+  padding: 20px; }
 
 .deck-lockup {
   float: left; }
-  .deck-lockup .deck-portrait {
+  .deck-lockup #deck-portrait {
     float: left;
     height: 63px;
     width: 62px;
@@ -43,7 +99,13 @@ body {
   .deck-stats li {
     float: left; }
     .deck-stats li + li {
-      margin-left: 20px; }
+      margin-left: 40px; }
+  .deck-stats .played:before,
+  .deck-stats .wins:before,
+  .deck-stats .losses:before,
+  .deck-stats .winrate:before {
+    display: block;
+    font-size: 0.8em; }
   .deck-stats .played:before {
     content: "Played: "; }
   .deck-stats .wins:before {
@@ -53,13 +115,26 @@ body {
   .deck-stats .winrate:before {
     content: "Winrate: "; }
 
-.deck-list {
-  list-style: none;
-  padding: 0; }
-
 .main-container {
   float: left;
   width: calc(100% - 240px); }
+  .main-container:before {
+    content: url(../assets/images/preloader.gif);
+    position: absolute;
+    top: 0;
+    left: 240px;
+    width: inherit;
+    height: 100%;
+    padding-top: 45vh;
+    text-align: center;
+    background-color: #fff;
+    opacity: 0;
+    transition: opacity 0.15s ease; }
+  .main-container.loading:before {
+    opacity: 1; }
+
+.main-content h3 {
+  margin-left: 20px; }
 
 .deck-winrates {
   float: left;
@@ -73,8 +148,7 @@ body {
   .deck-winrates .class-breakdown li {
     -webkit-flex: 1 0 0;
     flex: 1 0 0;
-    height: inherit;
-    border-right: 1px solid #e9e9ec; }
+    height: inherit; }
 
 .deck-cardlist {
   float: left;
@@ -87,11 +161,30 @@ body {
   .deck-cards .common {
     color: #61DB7B; }
   .deck-cards .rare {
-    color: #4E5AEA; }
+    color: #3399FF; }
   .deck-cards .epic {
     color: #B444D8; }
   .deck-cards .legendary {
-    color: #D89444; }
+    color: #F79F48; }
+
+.new-deck-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: inherit;
+  height: 100%;
+  padding: 20px;
+  background-color: #fff;
+  transition: all 0.25s cubic-bezier(0, 0, 0, 1);
+  transform: translateX(-240px); }
+  .new-deck-container.show {
+    transform: translateX(-1px); }
+
+.form-group {
+  margin-bottom: 20px; }
+  .form-group label {
+    font-size: 0.7em;
+    display: block; }
 
 .clearfix:after, .side-bar:after, .header:after, .deck-lockup:after, .deck-stats:after, .main-container:after, .deck-winrates:after, .deck-winrates .class-breakdown:after, .deck-cardlist:after {
   content: "";

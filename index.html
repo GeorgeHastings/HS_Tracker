@@ -4,40 +4,70 @@
 		<meta charset="utf-8">
 		<title>HS_Tracker</title>
 		<link rel="stylesheet" href="css/main.css" media="screen">
-		<link href='https://fonts.googleapis.com/css?family=Muli:400,300' rel='stylesheet' type='text/css'>
+		<link href='https://fonts.googleapis.com/css?family=Fira+Sans:400,500,700,300' rel='stylesheet' type='text/css'>
+		<script type="text/javascript" src="http://www.parsecdn.com/js/parse-latest.js"></script>
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 		<meta name="apple-mobile-web-app-capable" content="yes"/>
 	</head>
 	<body>
 		<div class="wrapper">
+			<div class="load-bar"></div>
 			<div class="side-bar">
 				<div class="logo">HS_Tracker</div>
+				<div id="newDeck" class="btn btn-main" onclick="UI.newDeckContainer.show();">+ New Deck</div>
+				<h4>Decks</h4>
 				<ul class="deck-list">
-					<li>Tempo</li>
-					<li>Face</li>
-					<li>Control</li>
-					<li>Dragon</li>
-					<li>Midrange</li>
+					<template id="deckListTemplate">
+						<li></li>
+					</template>
 				</ul>
+				<div id="newDeckContainer" class="new-deck-container">
+					<h3>New Deck</h3>
+					<form method="post" onsubmit="createNewDeck();">
+						<div class="form-group">	
+							<label>Name</label>
+							<input id="newDeckName" type="text" placeholder="Name your deck">
+						</div>
+						<div class="form-group">
+							<label>Class</label>
+							<select id="newDeckClass">
+							  <option value="druid">Druid</option>
+							  <option value="hunter">Hunter</option>
+							  <option value="mage">Mage</option>
+							  <option value="paladin">Paladin</option>
+							  <option value="priest">Priest</option>
+							  <option value="rogue">Rogue</option>
+							  <option value="shaman">Shaman</option>
+							  <option value="warlock">Warlock</option>
+							  <option value="warrior">Warrior</option>
+							</select>
+						</div>
+						<div class="form-group">
+							<button onclick="UI.newDeckContainer.hide()">Cancel</button>
+							<input type="submit">
+						</div>
+					</form>
+				</div>
 			</div>
 			<div class="main-container">
 				<div class="header">
 					<div class="deck-lockup">
-						<div class="deck-portrait hunter"></div>
-						<h2 class="deck-name">Midrange</h2>
+						<div id="deck-portrait" class=""></div>
+						<h2 class="deck-name"></h2>
 					</div>
 					<ul class="deck-stats">
-						<li class="played">40</li>
-						<li class="wins">30</li>
-						<li class="losses">10</li>
-						<li class="winrate">77%</li>
+						<li class="played"></li>
+						<li class="wins"></li>
+						<li class="losses"></li>
+						<li class="winrate"></li>
 					</ul>
 					<div class="deck-controls"></div>
 				</div>
 				<div class="main-content">
 					<div class="deck-winrates">
+						<h3>Deck Matchups</h3>
 						<ul class="class-breakdown">
-							<li></li>
+							<li data-height="49"></li>
 							<li></li>
 							<li></li>
 							<li></li>
@@ -49,22 +79,21 @@
 						</ul>
 					</div>
 					<div class="deck-cardlist">
+						<h3>Deck list</h3>
 						<ul class="deck-cards">
-							<li class="basic">Hunters Mark</li>
-							<li class="common">Webspinner</li>
-							<li class="common">Mad Scientist</li>
-							<li class="rare">Knife Juggler</li>
-							<li class="common">Haunted Creeper</li>
-							<li class="common">Quick Shot</li>
-							<li class="common">Freezing Trap</li>
-							<li class="legendary">Loatheb</li>
+						<template id="cardTemplate">
 							<li></li>
+						</template>
 						</ul>
 					</div>
 					<div class="deck-matches"></div>
 				</div>
 			</div>
 		</div>
+		<script type="text/javascript">
+		    Parse.initialize("KNXBcsrpEACd1tlisT2J2cZ9sTyw8bZGe8zG40pO", "vWDwWylDeN9SVvTzUKZHg7KFQzeDq0DiDJxaOwGH");
+		  </script>
+		<script type="text/json" src="data.json"></script>
 		<script type="text/javascript" src="js/app.js"></script>
 	</body>
 </html>

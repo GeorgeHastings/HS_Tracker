@@ -5,25 +5,74 @@ $darkgray: darken($gray, 10%);
 $darkestgray: darken($gray, 20%);
 
 $green: #61DB7B;
-$blue: #4E5AEA;
+$blue: #3399FF;
 $purple: #B444D8;
-$orange: #D89444;
+$orange: #F79F48;
 
 * {box-sizing: border-box;}
 
 html,
-body {
+body,
+.wrapper {
 	height: 100%;
 	width: 100%;
   margin: 0;
-	// overflow: hidden;
+	overflow: hidden;
 }
 
 body {
-	font: 17px / 27px 'Muli', sans-serif;
-	font-weight: bold;
+	font: 16px / 27px 'Fira Sans', sans-serif;
+	font-weight: 300;
 	background-attachment: fixed;
 	backface-visibility: hidden;
+}
+
+.load-bar {
+  width: 0%;
+  height: 3px;
+  background-color: #000;
+  backface-visibility: hidden;
+
+  &.loading {
+    opacity: 1;
+    animation: load 4s cubic-bezier(1,0,0,1);
+  }
+  &.loaded {
+    width: 100%;
+    opacity: 0;
+    transition: width 0.2s cubic-bezier(1,0,0,1), opacity 0.2s cubic-bezier(1,0,0,1) 0.2s;
+  }
+}
+
+@keyframes load {
+  0% {
+    width: 0%;
+  }
+  20% {
+    width: 25%;
+  }
+  40% {
+    width: 40%;
+  }
+  60% {
+    width: 70%;
+  }
+  80% {
+    width: 75%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+h3 {
+  font-size: 1em;
+  font-weight: normal;
+}
+h4 {
+  font-size: 0.8em;
+  font-weight: 500;
+  margin-bottom: 0;
 }
 
 .side-bar {
@@ -31,15 +80,42 @@ body {
   width: 240px;
   height: 100vh;
   padding: 20px;
-  background-color: $lightestgray;
+  border-right: 1px solid $lightestgray;
   @extend .clearfix;
+}
+
+.logo {
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.btn {
+  color: $blue;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.deck-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 10px;
+
+  li {
+    cursor: pointer;
+    color: #AAA;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 }
 
 .header {
   width: 100%;
   padding: 20px;
-  // height: 80px;
-  border-bottom: 1px solid $lightestgray;
   @extend .clearfix;
 }
 
@@ -47,7 +123,7 @@ body {
   float: left;
   @extend .clearfix;
 
-  .deck-portrait {
+  #deck-portrait {
     float: left;
     height: 63px;
     width: 62px;
@@ -69,8 +145,16 @@ body {
     float: left;
     
     & + li {
-      margin-left: 20px;
+      margin-left: 40px;
     }
+  }
+  
+  .played:before,
+  .wins:before,
+  .losses:before,
+  .winrate:before {
+    display: block;
+    font-size: 0.8em;
   }
 
   .played:before {
@@ -87,15 +171,34 @@ body {
   }
 }
 
-.deck-list {
-  list-style: none;
-  padding: 0;
-}
-
 .main-container {
   float: left;
   width: calc(100% - 240px);
   @extend .clearfix;
+
+  &:before {
+    content: url(../assets/images/preloader.gif);
+    position: absolute;
+    top: 0;
+    left: 240px;
+    width: inherit;
+    height: 100%;
+    padding-top: 45vh;
+    text-align: center;
+    background-color: #fff;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+
+  &.loading:before {
+    opacity: 1;
+  }
+}
+
+.main-content {
+  h3 {
+    margin-left: 20px;
+  }
 }
 
 .deck-winrates {
@@ -117,7 +220,12 @@ body {
     -webkit-flex: 1 0 0; 
      flex: 1 0 0;
     height: inherit;
-    border-right: 1px solid $lightestgray;
+
+    // @for $i from 1 through 9 {
+    //     &:nth-child(#{$i}) {  
+    //       background-color: hsl(30*$i,65%,65%);;
+    //     }
+    // }
   }
 }
 .deck-cardlist {
@@ -143,6 +251,31 @@ body {
   }
   .legendary {
     color: $orange;
+  }
+}
+
+.new-deck-container {
+  position: absolute;
+  top:0;
+  left:0;
+  width: inherit;
+  height: 100%;
+  padding: 20px;
+  background-color: #fff;
+  transition: all 0.25s cubic-bezier(0,0,0,1);
+  transform: translateX(-240px);
+
+  &.show {
+    transform: translateX(-1px);    
+  }
+}
+
+.form-group {
+  margin-bottom: 20px;
+
+  label {
+    font-size: 0.7em;
+    display: block;
   }
 }
 
