@@ -23,15 +23,19 @@ input {
 .load-bar {
   width: 0%;
   height: 3px;
-  background-color: #000;
+  margin-top: -3px;
+  background-color: #00FFCE;
+  transform: translateY(0px);
   backface-visibility: hidden; }
   .load-bar.loading {
     opacity: 1;
+    transform: translateY(3px);
     animation: load 4s cubic-bezier(1, 0, 0, 1); }
   .load-bar.loaded {
     width: 100%;
     opacity: 0;
-    transition: width 0.2s cubic-bezier(1, 0, 0, 1), opacity 0.2s cubic-bezier(1, 0, 0, 1) 0.2s; }
+    transform: translateY(0px);
+    transition: width 0.2s cubic-bezier(1, 0, 0, 1), opacity 0.2s cubic-bezier(1, 0, 0, 1) 0.2s, transform 0.2s cubic-bezier(1, 0, 0, 1) 0.2s; }
 
 @keyframes load {
   0% {
@@ -47,7 +51,7 @@ input {
   100% {
     width: 100%; } }
 h3 {
-  font-size: 1em;
+  font-size: 1.2em;
   font-weight: normal; }
 
 h4 {
@@ -60,6 +64,8 @@ h4 {
   width: 240px;
   height: 100vh;
   padding: 20px;
+  color: #fff;
+  background-color: #3E3B56;
   border-right: 1px solid #e9e9ec; }
 
 .logo {
@@ -67,7 +73,7 @@ h4 {
   margin-bottom: 20px; }
 
 .btn {
-  color: #3399FF;
+  color: #00FFCE;
   cursor: pointer; }
   .btn:hover {
     text-decoration: underline; }
@@ -78,9 +84,13 @@ h4 {
   margin-top: 10px; }
   .deck-list li {
     cursor: pointer;
-    color: #AAA; }
+    color: rgba(255, 255, 255, 0.4); }
     .deck-list li:hover {
-      text-decoration: underline; }
+      color: white; }
+
+.main-content {
+  float: left;
+  width: 70%; }
 
 .header {
   width: 100%;
@@ -120,31 +130,61 @@ h4 {
   .deck-stats .winrate:before {
     content: "Winrate: "; }
 
+.detail-container {
+  height: 100%; }
+
 .main-container {
   float: left;
-  width: calc(100% - 240px); }
+  width: calc(100% - 240px);
+  height: 100%; }
   .main-container.loading:before {
     opacity: 1; }
 
 .deck-winrates {
-  float: left;
-  width: 70%;
   height: 300px;
   padding: 20px; }
   .deck-winrates .class-breakdown {
     height: 100%;
     margin: 0;
     padding: 0;
-    list-style: none; }
+    list-style: none;
+    transform: rotateX(180deg); }
   .deck-winrates .class-breakdown li {
     -webkit-flex: 1 0 0;
-    flex: 1 0 0;
-    height: inherit; }
+    flex: 1 0 0; }
+    .deck-winrates .class-breakdown li:nth-child(1) {
+      background-color: #e0a66c; }
+    .deck-winrates .class-breakdown li:nth-child(2) {
+      background-color: #e0e06c; }
+    .deck-winrates .class-breakdown li:nth-child(3) {
+      background-color: #a6e06c; }
+    .deck-winrates .class-breakdown li:nth-child(4) {
+      background-color: #6ce06c; }
+    .deck-winrates .class-breakdown li:nth-child(5) {
+      background-color: #6ce0a6; }
+    .deck-winrates .class-breakdown li:nth-child(6) {
+      background-color: #6ce0e0; }
+    .deck-winrates .class-breakdown li:nth-child(7) {
+      background-color: #6ca6e0; }
+    .deck-winrates .class-breakdown li:nth-child(8) {
+      background-color: #6c6ce0; }
+    .deck-winrates .class-breakdown li:nth-child(9) {
+      background-color: #a66ce0; }
+
+.deck-matches {
+  padding: 20px; }
 
 .deck-cardlist {
   float: left;
   width: 30%;
-  padding: 20px; }
+  height: 100%;
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-left: 2px solid #eee; }
+  .deck-cardlist h3:after {
+    content: "(" attr(data-count) ")";
+    margin-left: 10px;
+    color: #ccc; }
 
 .card-search-container input {
   width: 100%; }
@@ -166,12 +206,20 @@ h4 {
   list-style: none;
   padding: 0; }
   .deck-cards li {
-    font-weight: 400; }
+    font-weight: 400;
+    cursor: pointer; }
+    .deck-cards li:hover {
+      text-decoration: underline; }
     .deck-cards li:before {
       content: attr(data-cost);
-      color: #999;
-      font-size: 0.7em;
+      color: #ccc;
+      font-size: 1em;
       margin-right: 10px; }
+    .deck-cards li:after {
+      content: attr(data-count);
+      float: right;
+      color: #000;
+      font-size: 1em; }
   .deck-cards .basic {
     color: #4b4d58; }
   .deck-cards .common {
@@ -202,7 +250,7 @@ h4 {
     font-size: 0.7em;
     display: block; }
 
-.clearfix:after, .side-bar:after, .header:after, .deck-lockup:after, .deck-stats:after, .main-container:after, .deck-winrates:after, .deck-winrates .class-breakdown:after, .deck-cardlist:after {
+.clearfix:after, .side-bar:after, .detail-container:after, .header:after, .deck-lockup:after, .deck-stats:after, .main-container:after, .deck-winrates:after, .deck-winrates .class-breakdown:after, .deck-cardlist:after {
   content: "";
   display: table;
   clear: both; }

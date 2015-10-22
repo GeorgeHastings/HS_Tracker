@@ -11,7 +11,6 @@
 	</head>
 	<body>
 		<div class="wrapper">
-			<div class="load-bar"></div>
 			<div class="side-bar">
 				<div class="logo">HS_Tracker</div>
 				<div id="newDeck" class="btn btn-main" onclick="UI.newDeckContainer.show();">+ New Deck</div>
@@ -50,33 +49,62 @@
 				</div>
 			</div>
 			<div class="main-container">
-				<div class="header">
-					<div class="deck-lockup">
-						<div id="deck-portrait" class=""></div>
-						<h2 class="deck-name"></h2>
-					</div>
-					<ul class="deck-stats">
-						<li class="played"></li>
-						<li class="wins"></li>
-						<li class="losses"></li>
-						<li class="winrate"></li>
-					</ul>
-					<div class="deck-controls"></div>
-				</div>
-				<div class="main-content">
-					<div class="deck-winrates">
-						<h3>Deck Matchups</h3>
-						<ul class="class-breakdown">
-							<li data-height="49"></li>
-							<li></li>
-							<li></li>
-							<li></li>
-							<li></li>
-							<li></li>
-							<li></li>
-							<li></li>
-							<li></li>
-						</ul>
+				<div class="load-bar"></div>
+				<div class="detail-container">
+					<div class="main-content">
+						<div class="header">
+							<div class="deck-lockup">
+								<div id="deck-portrait" class=""></div>
+								<h2 class="deck-name"></h2>
+							</div>
+							<ul class="deck-stats">
+								<li class="played"></li>
+								<li class="wins"></li>
+								<li class="losses"></li>
+								<li class="winrate"></li>
+							</ul>
+							<div class="deck-controls"></div>
+						</div>
+						<div class="deck-winrates">
+							<h3>Deck Matchups</h3>
+							<ul class="class-breakdown">
+								<li data-class="druid"></li>
+								<li data-class="hunter"></li>
+								<li data-class="mage"></li>
+								<li data-class="paladin"></li>
+								<li data-class="priest"></li>
+								<li data-class="rogue"></li>
+								<li data-class="shaman"></li>
+								<li data-class="warlock"></li>
+								<li data-class="warrior"></li>
+							</ul>
+						</div>
+						<div class="deck-matches">
+							<form method="post" onsubmit="Matches.createNewMatch();">
+								<input type="radio" value="win" checked name="outcome" id="matchWin">
+								<label for="win">Win</label>
+								<input type="radio" value="loss" name="outcome" id="matchLoss">
+								<label for="loss">Loss</label>
+								<select id="opponentClass">
+								  <option value="druid">Druid</option>
+								  <option value="hunter">Hunter</option>
+								  <option value="mage">Mage</option>
+								  <option value="paladin">Paladin</option>
+								  <option value="priest">Priest</option>
+								  <option value="rogue">Rogue</option>
+								  <option value="shaman">Shaman</option>
+								  <option value="warlock">Warlock</option>
+								  <option value="warrior">Warrior</option>
+								</select>
+								<select id="opponentArchetype">
+								  <option value="aggro">Aggro</option>
+								  <option value="midrange">Midrange</option>
+								  <option value="control">Control</option>
+								  <option value="paladin">Paladin</option>
+								</select>
+							</form>
+							<ul class="deck-match-list"></ul>
+						</div>
 					</div>
 					<div class="deck-cardlist">
 						<h3>Deck list</h3>
@@ -94,7 +122,6 @@
 						</template>
 						</ul>
 					</div>
-					<div class="deck-matches"></div>
 				</div>
 			</div>
 		</div>

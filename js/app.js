@@ -4,10 +4,29 @@ var Detail = {
 	currentDeck: ''
 };
 
+var Helpers = {
+	checkDoubles: function(a) {
+    	var counts = [];
+	    for(var i = 0; i <= a.length; i++) {
+	        if(counts[a[i]] === undefined) {
+	            counts[a[i]] = 1;
+	        } else {
+	            return true;
+	        }
+	    }
+	    return false;
+	}
+};
+
 var UI = {
 	loadBar: document.querySelector('.load-bar'),
 	deckList: document.querySelector('.deck-list'),
 	mainContainer: document.querySelector('.main-container'),
+	played: document.querySelector('.played'),
+	wins: document.querySelector('.wins'),
+	losses: document.querySelector('.losses'),
+	winrate: document.querySelector('.winrate'),
+	classCharts: document.querySelector('.class-breakdown'),
 	deckListTmp: document.getElementById('deckListTemplate'),
 	cardSearch: {
 		matches: [],
@@ -36,8 +55,9 @@ var UI = {
 			UI.cardSearch.results.className = 'card-search-results show';
 			for(var i = 0; i < UI.cardSearch.matches.length; i++) {
 				var template = UI.cardSearch.cardResultTemplate.content.cloneNode(true);
-				template.querySelector('li').innerText = UI.cardSearch.matches[i];
-				template.querySelector('li').onclick = Cards.getCard;
+				var el = template.querySelector('li');
+				el.innerText = UI.cardSearch.matches[i];
+				el.onclick = Cards.getCard;
 				UI.cardSearch.results.appendChild(template);
 			}
 		},
@@ -50,33 +70,58 @@ var UI = {
 		el: document.querySelector('.deck-cards'),
 		list: [],
 		sortList: function(a,b) {
-		  if (a.cost < b.cost){
-		    return -1;
-		  }
-		  if (a.cost > b.cost) {
-		    return 1;
-		  }
+		  var cost1 = a.cost;
+		  var cost2 = b.cost;
+
+		  var name1 = a.name;
+		  var name2 = b.name;
+
+		  if (cost1 < cost2) {return -1;}
+		  if (cost1 > cost2) {return 1;}
+		  if (name1 < name2) {return -1;}
+		  if (name1 > name2) {return 1;}
 		  return 0;
 		},
 		addCardToList: function(card) {
 			UI.cardList.list.push(card);
-			UI.cardList.saveToDeck();
+			UI.cardList.saveDeck();
+			UI.cardList.renderList();
+		},
+		removeCardFromList: function() {
+			var name = this.innerHTML;
+			UI.cardList.list.sort(this.sortList);
+			for(var i = 0; i < UI.cardList.list.length; i++) {
+				if(UI.cardList.list[i].name === name) {
+					document.getElementById(UI.cardList.list[i].id).setAttribute('data-count', '');
+					UI.cardList.list.splice(i, 1);
+				}
+			}
+			UI.cardList.saveDeck();
 			UI.cardList.renderList();
 		},
 		renderList: function() {
+			document.querySelector('.deck-cardlist h3').setAttribute('data-count', UI.cardList.list.length);
 			UI.cardList.el.innerHTML = '';
 			if(UI.cardList.list) {	
 				UI.cardList.list.sort(this.sortList);
 				for(var i = 0; i < UI.cardList.list.length; i++) {
-					var template = this.cardTmp.content.cloneNode(true);
-					template.querySelector('li').innerHTML = UI.cardList.list[i].name;
-					template.querySelector('li').setAttribute('data-cost', UI.cardList.list[i].cost);
-					template.querySelector('li').className = UI.cardList.list[i].rarity.toLowerCase();
-					this.el.appendChild(template);
+					if(i > 0 && UI.cardList.list[i].id === UI.cardList.list[i-1].id) {
+						document.getElementById(UI.cardList.list[i].id).setAttribute('data-count', 2);
+					}	
+					else {
+						var template = this.cardTmp.content.cloneNode(true);
+						var el = template.querySelector('li');
+						el.innerHTML = UI.cardList.list[i].name;
+						el.setAttribute('id', UI.cardList.list[i].id);
+						el.setAttribute('data-cost', UI.cardList.list[i].cost);
+						el.className = UI.cardList.list[i].rarity.toLowerCase();
+						el.onclick = UI.cardList.removeCardFromList;
+						this.el.appendChild(template);
+					}
 				}
 			}
 		},
-		saveToDeck: function() {
+		saveDeck: function() {
 			var Deck = Parse.Object.extend('Deck');
 			var query = new Parse.Query(Deck);
 			query.equalTo('name', Detail.currentDeck);
@@ -167,9 +212,10 @@ var Decks = {
 		UI.deckList.innerHTML = '';
 		for(var i = 0; i < results.length; i++) {
 			var template = UI.deckListTmp.content.cloneNode(true);
-			template.querySelector('li').setAttribute('data-index', i);
-			template.querySelector('li').innerHTML += results[i].get('name');
-			template.querySelector('li').onclick = Decks.pullDeckByIndex;
+			var el = template.querySelector('li');
+			el.setAttribute('data-index', i);
+			el.innerHTML += results[i].get('name');
+			el.onclick = Decks.pullDeckByIndex;
 			UI.deckList.appendChild(template);
 		}
 	},
@@ -201,6 +247,72 @@ var Decks = {
 		  }
 		});
 	},
+	pullFirstDeck: function(e) {
+		UI.loadBar.className = 'load-bar loading';
+		var Deck = Parse.Object.extend('Deck');
+		var query = new Parse.Query(Deck);
+		query.first({
+		  success: function(deck) {
+		  	Detail.currentDeck = deck.get('name');
+		  	renderDetail(deck);
+		  },
+		  error: function(object, error) {
+		  	console.log('something fucked up');
+		  }
+		});
+	},
+};
+// [{"deck":"Tempo","opponent":"paladin","outcome":"win","archetype":"midrange"}]
+
+var Matchups = {
+	matchups: [],
+	played: 0,
+	win: 0,
+	loss: 0,
+	getMatchups: function(){
+		var Deck = Parse.Object.extend('Deck');
+		var query = new Parse.Query(Deck);
+		query.equalTo('name', Detail.currentDeck);
+		query.first({
+		  success: function(deck) {
+		    Matchups.matchups = deck.get('matchUps');
+		    Matchups.calcStats();
+		    Matchups.renderStats();
+		    Matchups.renderChart();
+		  }
+		});
+	},
+	calcStats: function() {
+		var played = 0,
+			wins = 0,
+			losses = 0;
+		for(var i = 0; i < this.matchups.length; i++) {
+			played++;
+			if(this.matchups[i].outcome === 'win'){
+				wins++;
+			}
+			else {
+				losses++;
+			}
+		}
+		Matchups.played = played;
+		Matchups.win = wins;
+		Matchups.loss = losses;
+	},
+	renderStats: function() {
+		UI.played.innerHTML = this.played;
+		UI.wins.innerHTML = this.win;
+		UI.losses.innerHTML = this.loss;
+		UI.winrate.innerHTML = this.win/this.played*100+'%';
+	},
+	renderChart: function() {
+		for(var i = 0; i < this.matchups.length; i++) {
+			var chart = UI.classCharts.querySelector('[data-class="'+this.matchups[i].opponent+'"]');
+			if(this.matchups[i].outcome === 'win') {
+				chart.style.height = '50%';
+			}
+		}
+	}
 };
 
 var renderDetail = function(deck) {
@@ -216,9 +328,11 @@ var renderDetail = function(deck) {
 	else {
 		UI.cardList.list = [];
 	}
+	Matchups.getMatchups();
 	UI.cardList.renderList();
 	UI.loadBar.className = 'load-bar loaded';
 };
 
 Cards.buildNameArray();
 Decks.pullDeckList();
+Decks.pullFirstDeck();
