@@ -1,5 +1,7 @@
 'use strict';
 
+Chart.defaults.global.responsive = true;
+
 var Detail = {
 	currentDeck: ''
 };
@@ -262,13 +264,24 @@ var Decks = {
 		});
 	},
 };
-// [{"deck":"Tempo","opponent":"paladin","outcome":"win","archetype":"midrange"}]
+// [{'deck':'Tempo','opponent':'paladin','outcome':'win','archetype':'midrange'}]
 
 var Matchups = {
 	matchups: [],
 	played: 0,
 	win: 0,
 	loss: 0,
+	oppClasses: {
+		'druid': [0,0],
+		'hunter': [0,0],
+		'mage': [0,0],
+		'paladin': [0,0],
+		'priest': [0,0],
+		'rogue': [0,0],
+		'shaman': [0,0],
+		'warlock': [0,0],
+		'warrior': [0,0]
+	},
 	getMatchups: function(){
 		var Deck = Parse.Object.extend('Deck');
 		var query = new Parse.Query(Deck);
@@ -278,6 +291,7 @@ var Matchups = {
 		    Matchups.matchups = deck.get('matchUps');
 		    Matchups.calcStats();
 		    Matchups.renderStats();
+		    Matchups.calcMatchups();
 		    Matchups.renderChart();
 		  }
 		});
@@ -299,6 +313,16 @@ var Matchups = {
 		Matchups.win = wins;
 		Matchups.loss = losses;
 	},
+	calcMatchups: function() {
+		for(var i = 0; i < this.matchups.length; i++) {
+			var oppClass = Matchups.oppClasses[this.matchups[i].opponent];
+			oppClass[0]++;
+			if(this.matchups[i].outcome === 'win') {
+				oppClass[1]++;
+			}
+		}
+		// var winrate = this.oppClasses[Object.keys(this.oppClasses)[i]];
+	},
 	renderStats: function() {
 		UI.played.innerHTML = this.played;
 		UI.wins.innerHTML = this.win;
@@ -306,12 +330,21 @@ var Matchups = {
 		UI.winrate.innerHTML = this.win/this.played*100+'%';
 	},
 	renderChart: function() {
-		for(var i = 0; i < this.matchups.length; i++) {
-			var chart = UI.classCharts.querySelector('[data-class="'+this.matchups[i].opponent+'"]');
-			if(this.matchups[i].outcome === 'win') {
-				chart.style.height = '50%';
-			}
-		}
+		var data = {
+		    labels: ['Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior'],
+		    datasets: [
+		        {
+		            label: 'My First dataset',
+		            fillColor: 'rgba(220,220,220,0.5)',
+		            strokeColor: 'rgba(220,220,220,0.8)',
+		            highlightFill: 'rgba(220,220,220,0.75)',
+		            highlightStroke: 'rgba(220,220,220,1)',
+		            data: [65, 59, 80, 81, 56, 55, 40, 44, 66]
+		        }
+		    ]
+		};
+		var ctx = document.getElementById('myChart').getContext('2d');
+		var myBarChart = new Chart(ctx).Bar(data, {responsive: true});
 	}
 };
 

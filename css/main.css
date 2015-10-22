@@ -20,6 +20,9 @@ input {
   padding: 5px 10px;
   font: inherit; }
 
+canvas {
+  padding-right: 40px; }
+
 .load-bar {
   width: 0%;
   height: 3px;
@@ -141,7 +144,7 @@ h4 {
     opacity: 1; }
 
 .deck-winrates {
-  height: 300px;
+  height: auto;
   padding: 20px; }
   .deck-winrates .class-breakdown {
     height: 100%;

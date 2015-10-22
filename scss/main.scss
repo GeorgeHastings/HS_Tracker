@@ -34,6 +34,10 @@ input {
   font: inherit;
 }
 
+canvas {
+  padding-right: 40px;
+}
+
 .load-bar {
   width: 0%;
   height: 3px;
@@ -209,7 +213,7 @@ h4 {
 }
 
 .deck-winrates {
-  height: 300px;
+  height: auto;
   padding: 20px;
   @extend .clearfix;
   
