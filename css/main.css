@@ -11,9 +11,14 @@ body,
 
 body {
   font: 16px / 27px 'Fira Sans', sans-serif;
-  font-weight: 300;
+  font-weight: 400;
   background-attachment: fixed;
   backface-visibility: hidden; }
+
+input {
+  height: 40px;
+  padding: 5px 10px;
+  font: inherit; }
 
 .load-bar {
   width: 0%;
@@ -121,13 +126,11 @@ h4 {
   .main-container.loading:before {
     opacity: 1; }
 
-.main-content h3 {
-  margin-left: 20px; }
-
 .deck-winrates {
   float: left;
   width: 70%;
-  height: 300px; }
+  height: 300px;
+  padding: 20px; }
   .deck-winrates .class-breakdown {
     height: 100%;
     margin: 0;
@@ -140,10 +143,35 @@ h4 {
 
 .deck-cardlist {
   float: left;
-  width: 30%; }
+  width: 30%;
+  padding: 20px; }
+
+.card-search-container input {
+  width: 100%; }
+
+.card-search-results {
+  display: none;
+  list-style: none;
+  margin: 0;
+  padding: 20px;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3); }
+  .card-search-results.show {
+    display: block; }
+  .card-search-results li {
+    cursor: pointer; }
+    .card-search-results li:hover {
+      background-color: #f1f1f1; }
 
 .deck-cards {
-  list-style: none; }
+  list-style: none;
+  padding: 0; }
+  .deck-cards li {
+    font-weight: 400; }
+    .deck-cards li:before {
+      content: attr(data-cost);
+      color: #999;
+      font-size: 0.7em;
+      margin-right: 10px; }
   .deck-cards .basic {
     color: #4b4d58; }
   .deck-cards .common {
