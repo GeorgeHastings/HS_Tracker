@@ -22,7 +22,7 @@
 				</ul>
 				<div id="newDeckContainer" class="new-deck-container">
 					<h3>New Deck</h3>
-					<form method="post" onsubmit="Decks.createNewDeck();">
+					<form method="post">
 						<div class="form-group">	
 							<label>Name</label>
 							<input id="newDeckName" type="text" placeholder="Name your deck">
@@ -42,8 +42,8 @@
 							</select>
 						</div>
 						<div class="form-group">
-							<div onclick="UI.newDeckContainer.hide()">Cancel</div>
-							<input type="submit">
+							<input type="button" onclick="UI.newDeckContainer.hide()" value="Cancel">
+							<input type="button" onclick="Decks.createNewDeck();" value="Submit">
 						</div>
 					</form>
 				</div>
@@ -70,7 +70,8 @@
 							<canvas id="myChart" width="560" height="200"></canvas>
 						</div>
 						<div class="deck-matches">
-							<form method="post" onsubmit="Matches.createNewMatch();">
+							<form method="post">
+								<label>New Match: </label>
 								<input type="radio" value="win" checked name="outcome" id="matchWin">
 								<label for="win">Win</label>
 								<input type="radio" value="loss" name="outcome" id="matchLoss">
@@ -96,8 +97,26 @@
 								  <option value="fatigue">Fatigue</option>
 								  <option value="mill">Mill</option>
 								</select>
+								<input type="button" name="" value="Submit" onclick="Matchups.createNewMatch();">
 							</form>
-							<ul class="deck-match-list"></ul>
+							<ul class="deck-match-header">
+								<li>Deck</li>
+								<li>Outcome</li>
+								<li>Archetype</li>
+								<li>Opponent Class</li>
+								<li></li>
+							</ul>
+							<ul class="deck-match-list">
+								<template id="matchItem">
+									<li>
+										<div class="match-deck-name"></div>
+										<div class="match-outcome"></div>
+										<div class="match-archetype"></div>
+										<div class="match-opponent"></div>
+										<div class="delete-match">Remove</div>
+									</li>
+								</template>
+							</ul>
 						</div>
 					</div>
 					<div class="deck-cardlist">

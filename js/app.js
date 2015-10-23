@@ -19,7 +19,7 @@ var Helpers = {
 	    return false;
 	},
 	makePercent: function(amount, total, pts) {
-		return parseInt((amount/total*100).toFixed(pts));
+		return (amount/total*100).toFixed(pts);
 	}
 };
 
@@ -32,7 +32,10 @@ var UI = {
 	losses: document.querySelector('.losses'),
 	winrate: document.querySelector('.winrate'),
 	classCharts: document.querySelector('.class-breakdown'),
+	deckWinRates: document.querySelector('.deck-winrates'),
 	deckListTmp: document.getElementById('deckListTemplate'),
+	matchList: document.querySelector('.deck-match-list'),
+	matchItemTmp: document.getElementById('matchItem'),
 	cardSearch: {
 		matches: [],
 		el: document.getElementById('cardSearch'),
@@ -148,7 +151,18 @@ var UI = {
 		hide: function() {
 			UI.newDeckContainer.el.className = 'new-deck-container';
 		}
-	}
+	},
+	classColors: [
+		'#F47D20',
+		'#A9D26D',
+		'#65CBF0',
+		'#F28AB8',
+		'#989798',
+		'#EFC418',
+		'#356CB4',
+		'#957FBB',
+		'#C69B69'
+	]
 };
 
 var Cards = {
@@ -291,11 +305,18 @@ var Matchups = {
 		query.equalTo('name', Detail.currentDeck);
 		query.first({
 		  success: function(deck) {
-		    Matchups.matchups = deck.get('matchUps');
+		    if(deck.get('matchUps')) {
+		    	Matchups.matchups = deck.get('matchUps');
+		    }
+		    else {
+		    	Matchups.matchups = [];
+		    }
+		    Matchups.resetMatchups();
 		    Matchups.calcStats();
 		    Matchups.renderStats();
 		    Matchups.calcMatchups();
 		    Matchups.renderChart();
+		    Matchups.renderMatchList();
 		  }
 		});
 	},
@@ -303,18 +324,25 @@ var Matchups = {
 		var played = 0,
 			wins = 0,
 			losses = 0;
-		for(var i = 0; i < this.matchups.length; i++) {
-			played++;
-			if(this.matchups[i].outcome === 'win'){
-				wins++;
-			}
-			else {
-				losses++;
+		if(this.matchups) {	
+			for(var i = 0; i < this.matchups.length; i++) {
+				played++;
+				if(this.matchups[i].outcome === 'win'){
+					wins++;
+				}
+				else {
+					losses++;
+				}
 			}
 		}
 		Matchups.played = played;
 		Matchups.win = wins;
 		Matchups.loss = losses;
+	},
+	resetMatchups: function() {
+		for(var prop in Matchups.oppClasses) {
+			Matchups.oppClasses[prop] = [0,0];
+		}
 	},
 	calcMatchups: function() {
 		for(var i = 0; i < this.matchups.length; i++) {
@@ -324,7 +352,6 @@ var Matchups = {
 				oppClass[0]++;
 			}
 		}
-		// var winrate = this.oppClasses[Object.keys(this.oppClasses)[i]];
 	},
 	getClassWinRates: function() {
 		var data = [];
@@ -336,14 +363,67 @@ var Matchups = {
 				data.push(0);
 			}
 		}
-		console.log(data);
 		return data;
 	},
-	renderNewMatch: function() {
-
+	getClassPlayCounts: function() {
+		var data = [];
+		for(var prop in this.oppClasses) {
+			data.push(Helpers.makePercent(this.oppClasses[prop][1], Matchups.matchups.length, 0));
+		}
+		return data;
 	},
 	saveMatches: function() {
-
+		var Deck = Parse.Object.extend('Deck');
+		var query = new Parse.Query(Deck);
+		query.equalTo('name', Detail.currentDeck);
+		query.first({
+		  success: function(updateDeck) {
+		    updateDeck.set('matchUps', Matchups.matchups);
+		    updateDeck.save();
+		  }
+		});
+	},
+	createNewMatch: function() {
+		// event.preventDefault();
+		var match = {
+			outcome: document.querySelector('input[name="outcome"]:checked').value,
+			opponent: document.getElementById('opponentClass').value,
+			archetype: document.getElementById('opponentArchetype').value
+		};
+		this.matchups.push(match);
+		this.saveMatches();
+		this.resetMatchups();
+		this.calcStats();
+		this.renderMatchList();
+		this.calcMatchups();
+		this.renderChart();
+	},
+	removeMatch: function() {
+		var index = this.parentNode.getAttribute('data-index');
+		Matchups.matchups.splice(index, 1);
+		Matchups.saveMatches();
+		Matchups.resetMatchups();
+		Matchups.calcStats();
+		Matchups.renderMatchList();
+		Matchups.calcMatchups();
+		Matchups.renderChart();
+	},
+	clearMatchList: function() {
+		UI.matchList.innerHTML = '';
+	},
+	renderMatchList: function() {
+		this.clearMatchList();
+		for(var i = 0; i < Matchups.matchups.length; i++) {
+			var template = UI.matchItemTmp.content.cloneNode(true);
+			template.querySelector('li').setAttribute('data-index', i);
+			template.querySelector('.match-deck-name').innerHTML = Detail.currentDeck;
+			template.querySelector('.match-outcome').innerHTML = Matchups.matchups[i].outcome;
+			template.querySelector('.match-outcome').className += ' '+Matchups.matchups[i].outcome;
+			template.querySelector('.match-opponent').innerHTML = Matchups.matchups[i].opponent;
+			template.querySelector('.match-archetype').innerHTML = Matchups.matchups[i].archetype;
+			template.querySelector('.delete-match').onclick = Matchups.removeMatch;
+			UI.matchList.insertBefore(template, UI.matchList.firstChild);
+		}
 	},
 	renderStats: function() {
 		UI.played.innerHTML = this.played;
@@ -356,17 +436,23 @@ var Matchups = {
 		    labels: ['Druid', 'Hunter', 'Mage', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior'],
 		    datasets: [
 		        {
-		            label: 'My First dataset',
+		            label: 'Win Rate',
 		            fillColor: 'rgba(220,220,220,0.5)',
-		            strokeColor: 'rgba(220,220,220,0.8)',
-		            highlightFill: 'rgba(220,220,220,0.75)',
-		            highlightStroke: 'rgba(220,220,220,1)',
 		            data: Matchups.getClassWinRates()
-		        }
+		        },
+		        {
+		    		label: 'Play count',
+		    		fillColor: 'rgba(220,220,220,0.5)',
+		    		data: Matchups.getClassPlayCounts()
+		    	}
 		    ]
 		};
 		var ctx = document.getElementById('myChart').getContext('2d');
 		var myBarChart = new Chart(ctx).Bar(data, {responsive: true});
+    	for(var i=0; i < 9; i++) {
+    		myBarChart.datasets[0].bars[i].fillColor = UI.classColors[i];
+    	}
+    	myBarChart.update();
 	}
 };
 
