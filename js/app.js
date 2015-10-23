@@ -17,6 +17,9 @@ var Helpers = {
 	        }
 	    }
 	    return false;
+	},
+	makePercent: function(amount, total, pts) {
+		return parseInt((amount/total*100).toFixed(pts));
 	}
 };
 
@@ -316,18 +319,37 @@ var Matchups = {
 	calcMatchups: function() {
 		for(var i = 0; i < this.matchups.length; i++) {
 			var oppClass = Matchups.oppClasses[this.matchups[i].opponent];
-			oppClass[0]++;
+			oppClass[1]++;
 			if(this.matchups[i].outcome === 'win') {
-				oppClass[1]++;
+				oppClass[0]++;
 			}
 		}
 		// var winrate = this.oppClasses[Object.keys(this.oppClasses)[i]];
+	},
+	getClassWinRates: function() {
+		var data = [];
+		for(var prop in this.oppClasses) {
+			if(Helpers.makePercent(this.oppClasses[prop][0], this.oppClasses[prop][1], 0) > 0) {
+				data.push(Helpers.makePercent(this.oppClasses[prop][0], this.oppClasses[prop][1], 0));
+			}
+			else {
+				data.push(0);
+			}
+		}
+		console.log(data);
+		return data;
+	},
+	renderNewMatch: function() {
+
+	},
+	saveMatches: function() {
+
 	},
 	renderStats: function() {
 		UI.played.innerHTML = this.played;
 		UI.wins.innerHTML = this.win;
 		UI.losses.innerHTML = this.loss;
-		UI.winrate.innerHTML = this.win/this.played*100+'%';
+		UI.winrate.innerHTML = Helpers.makePercent(this.win, this.played, 2)+'%';
 	},
 	renderChart: function() {
 		var data = {
@@ -339,7 +361,7 @@ var Matchups = {
 		            strokeColor: 'rgba(220,220,220,0.8)',
 		            highlightFill: 'rgba(220,220,220,0.75)',
 		            highlightStroke: 'rgba(220,220,220,1)',
-		            data: [65, 59, 80, 81, 56, 55, 40, 44, 66]
+		            data: Matchups.getClassWinRates()
 		        }
 		    ]
 		};
