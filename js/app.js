@@ -177,7 +177,7 @@ var Cards = {
 	returnNames: function(data) {
 		var resp = data.target.responseText;
 		var obj = JSON.parse(resp);
-		Cards.collectNames(obj);
+		Cards.collectNames(obj.results);
 	},
 	buildNameArray: function() {
 		Cards.getJSON(Cards.returnNames);
@@ -185,15 +185,15 @@ var Cards = {
 	getJSON: function(callback){
 	  var c = new XMLHttpRequest;
 	  c.onload = callback;
-	  c.open('GET', 'cards.json');
+	  c.open('GET', 'js/cards.json');
 	  c.send();
 	},
 	returnCard: function(data) {
 		var resp = data.target.responseText;
 		var obj = JSON.parse(resp);
-		for(var i = 0; i < obj.length; i++) {
-			if(obj[i].name === Cards.query) {
-				var card = obj[i];
+		for(var i = 0; i < obj.results.length; i++) {
+			if(obj.results[i].name === Cards.query) {
+				var card = obj.results[i];
 				UI.cardList.addCardToList(card);
 			}
 		}

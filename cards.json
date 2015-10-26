@@ -1,4 +1,4 @@
-[{
+{"results": [{
     "id": "EX1_066",
     "name": "Acidic Swamp Ooze",
     "type": "Minion",
@@ -11145,3 +11145,4 @@
     ]
 }
 ]
+}
