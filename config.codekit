@@ -24,17 +24,6 @@
 		"outputPathIsSetByUser": 0,
 		"processed": 0
 		},
-	"\/cards.json": {
-		"fileType": 524288,
-		"ignore": 1,
-		"ignoreWasSetByUser": 0,
-		"inputAbbreviatedPath": "\/cards.json",
-		"orderOutput": 0,
-		"outputAbbreviatedPath": "\/cards-min.json",
-		"outputPathIsOutsideProject": 0,
-		"outputPathIsSetByUser": 0,
-		"outputStyle": 1
-		},
 	"\/css\/main.css": {
 		"fileType": 16,
 		"ignore": 1,
@@ -63,17 +52,6 @@
 		"outputPathIsSetByUser": 0,
 		"outputStyle": 1,
 		"syntaxCheckerStyle": 1
-		},
-	"\/js\/cards.json": {
-		"fileType": 524288,
-		"ignore": 1,
-		"ignoreWasSetByUser": 0,
-		"inputAbbreviatedPath": "\/js\/cards.json",
-		"orderOutput": 0,
-		"outputAbbreviatedPath": "\/js\/cards-min.json",
-		"outputPathIsOutsideProject": 0,
-		"outputPathIsSetByUser": 0,
-		"outputStyle": 1
 		},
 	"\/js\/chart.js": {
 		"fileType": 64,
