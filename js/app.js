@@ -2,6 +2,12 @@
 
 Chart.defaults.global.responsive = true;
 Chart.defaults.global.animationSteps = 20;
+Chart.defaults.global.scaleOverride = true;
+Chart.defaults.global.scaleSteps = 4;
+Chart.defaults.global.scaleStepWidth = 25;
+Chart.defaults.global.scaleStartValue = 0;
+Chart.defaults.global.scaleLineColor = "rgba(0,0,0,.0)";
+// Chart.defaults.global.scaleShowGridLines = false;
 
 var Detail = {
 	currentDeck: '',
@@ -249,14 +255,35 @@ var Decks = {
 		  }
 		});
 	},
+	deleteDeck: function() {
+		var Deck = Parse.Object.extend('Deck');
+		var query = new Parse.Query(Deck);
+		var index = this.previousElementSibling.innerHTML;
+		query.equalTo('name', index);
+		query.find({
+		  success: function(deck) {
+  			var deleteDeck = confirm('Are you sure you want to delete this deck?');
+  			if(deleteDeck) {
+  				deck[0].destroy({
+  				success: function(){	
+  					Decks.pullDeckList();
+  				}
+  			});
+  			}
+		  },
+		  error: function(object, error) {
+		  	console.log('something fucked up');
+		  }
+		});
+	},
 	renderDeckList: function(results) {
 		UI.deckList.innerHTML = '';
 		for(var i = 0; i < results.length; i++) {
 			var template = UI.deckListTmp.content.cloneNode(true);
-			var el = template.querySelector('li');
-			el.setAttribute('data-index', i);
-			el.innerHTML += results[i].get('name');
-			el.onclick = Decks.pullDeckByIndex;
+			template.querySelector('li').setAttribute('data-index', i);
+			template.querySelector('.deck-name').innerHTML = results[i].get('name');
+			template.querySelector('.delete-deck').onclick = Decks.deleteDeck;
+			template.querySelector('.deck-name').onclick = Decks.pullDeckByIndex;
 			UI.deckList.appendChild(template);
 		}
 	},
@@ -272,7 +299,7 @@ var Decks = {
 		  }
 		});
 	},
-	pullDeckByIndex: function(e) {
+	pullDeckByIndex: function() {
 		UI.loadBar.className = 'load-bar loading';
 		var index = this.innerText;
 		var Deck = Parse.Object.extend('Deck');
@@ -288,7 +315,7 @@ var Decks = {
 		  }
 		});
 	},
-	pullFirstDeck: function(e) {
+	pullFirstDeck: function() {
 		UI.loadBar.className = 'load-bar loading';
 		var Deck = Parse.Object.extend('Deck');
 		var query = new Parse.Query(Deck);
@@ -472,7 +499,7 @@ var Matchups = {
 		    ]
 		};
 		var ctx = document.getElementById('myChart').getContext('2d');
-		this.classMatchupChart = new Chart(ctx).Bar(data, {responsive: true});
+		this.classMatchupChart = new Chart(ctx).Bar(data, {responsive: true, scaleShowGridLines: false});
     	for(var i=0; i < 9; i++) {
     		this.classMatchupChart.datasets[0].bars[i].fillColor = UI.classColors[i];
     	}
