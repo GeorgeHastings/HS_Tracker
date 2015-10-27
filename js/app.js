@@ -426,7 +426,7 @@ var Matchups = {
 		Matchups.saveMatches();
 		Matchups.resetMatchups();
 		Matchups.calcStats();
-		this.renderStats();
+		Matchups.renderStats();
 		Matchups.renderMatchList();
 		Matchups.calcMatchups();
 		Matchups.renderChart();
