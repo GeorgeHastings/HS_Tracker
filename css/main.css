@@ -33,7 +33,7 @@ canvas {
   .load-bar.loading {
     opacity: 1;
     transform: translateY(3px);
-    animation: load 4s cubic-bezier(1, 0, 0, 1); }
+    animation: load 8s cubic-bezier(1, 0, 0, 1); }
   .load-bar.loaded {
     width: 100%;
     opacity: 0;

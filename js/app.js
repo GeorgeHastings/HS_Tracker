@@ -4,7 +4,24 @@ Chart.defaults.global.responsive = true;
 Chart.defaults.global.animationSteps = 20;
 
 var Detail = {
-	currentDeck: ''
+	currentDeck: '',
+	renderDetail: function(deck) {
+		document.getElementById('deck-portrait').className = deck.get('heroClass');
+		UI.mainContainer.querySelector('.deck-name').innerHTML = deck.get('name');
+		UI.mainContainer.querySelector('.played').innerHTML = deck.get('played');
+		UI.mainContainer.querySelector('.wins').innerHTML = deck.get('wins');
+		UI.mainContainer.querySelector('.losses').innerHTML = deck.get('losses');
+		UI.mainContainer.querySelector('.winrate').innerHTML = deck.get('winRate');
+		if(deck.get('deckList') !== undefined) {
+			UI.cardList.list = deck.get('deckList');
+		}
+		else {
+			UI.cardList.list = [];
+		}
+		UI.cardList.renderList();
+		Matchups.getMatchups();
+		UI.loadBar.className = 'load-bar loaded';
+	}
 };
 
 var Helpers = {
@@ -193,22 +210,6 @@ var Cards = {
 		  }
 		});
 	},
-	getJSON: function(callback){
-	  var c = new XMLHttpRequest;
-	  c.onload = callback;
-	  c.open('GET', 'js/cards.json');
-	  c.send();
-	},
-	returnCard: function(data) {
-		var resp = data.target.responseText;
-		var obj = JSON.parse(resp);
-		for(var i = 0; i < obj.results.length; i++) {
-			if(obj.results[i].name === Cards.query) {
-				var card = obj.results[i];
-				UI.cardList.addCardToList(card);
-			}
-		}
-	},
 	getCard: function() {
 		var card = this.innerText;
 		var Card = Parse.Object.extend('cards');
@@ -280,7 +281,7 @@ var Decks = {
 		query.equalTo('name', index);
 		query.find({
 		  success: function(deck) {
-		  	renderDetail(deck[0]);
+		  	Detail.renderDetail(deck[0]);
 		  },
 		  error: function(object, error) {
 		  	console.log('something fucked up');
@@ -294,7 +295,7 @@ var Decks = {
 		query.first({
 		  success: function(deck) {
 		  	Detail.currentDeck = deck.get('name');
-		  	renderDetail(deck);
+		  	Detail.renderDetail(deck);
 		  },
 		  error: function(object, error) {
 		  	console.log('something fucked up');
@@ -327,12 +328,7 @@ var Matchups = {
 		  success: function(deck) {
 		    if(deck.get('matchUps')) {
 		    	Matchups.matchups = deck.get('matchUps');
-		    	Matchups.resetMatchups();
-			    Matchups.calcStats();
-			    Matchups.renderStats();
-			    Matchups.calcMatchups();
-			    Matchups.renderChart();
-			    Matchups.renderMatchList();
+		    	Matchups.refreshMatchups();
 		    }
 		    else {
 		    	Matchups.matchups = [];
@@ -361,19 +357,11 @@ var Matchups = {
 		Matchups.win = wins;
 		Matchups.loss = losses;
 	},
-	resetMatchups: function() {
-		for(var prop in Matchups.oppClasses) {
-			Matchups.oppClasses[prop] = [0,0];
-		}
-	},
-	calcMatchups: function() {
-		for(var i = 0; i < this.matchups.length; i++) {
-			var oppClass = Matchups.oppClasses[this.matchups[i].opponent];
-			oppClass[1]++;
-			if(this.matchups[i].outcome === 'win') {
-				oppClass[0]++;
-			}
-		}
+	renderStats: function() {
+		UI.played.innerHTML = this.played;
+		UI.wins.innerHTML = this.win;
+		UI.losses.innerHTML = this.loss;
+		UI.winrate.innerHTML = Helpers.makePercent(this.win, this.played, 2)+'%';
 	},
 	getClassWinRates: function() {
 		var data = [];
@@ -405,6 +393,28 @@ var Matchups = {
 		  }
 		});
 	},
+	resetMatchups: function() {
+		for(var prop in Matchups.oppClasses) {
+			Matchups.oppClasses[prop] = [0,0];
+		}
+	},
+	calcMatchups: function() {
+		for(var i = 0; i < this.matchups.length; i++) {
+			var oppClass = Matchups.oppClasses[this.matchups[i].opponent];
+			oppClass[1]++;
+			if(this.matchups[i].outcome === 'win') {
+				oppClass[0]++;
+			}
+		}
+	},
+	refreshMatchups: function() {
+		this.resetMatchups();
+		this.calcStats();
+		this.renderStats();
+		this.renderMatchList();
+		this.calcMatchups();
+		this.renderChart();
+	},
 	createNewMatch: function() {
 		var match = {
 			outcome: document.querySelector('input[name="outcome"]:checked').value,
@@ -413,23 +423,14 @@ var Matchups = {
 		};
 		this.matchups.push(match);
 		this.saveMatches();
-		this.resetMatchups();
-		this.calcStats();
-		this.renderStats();
-		this.renderMatchList();
-		this.calcMatchups();
-		this.renderChart();
+		this.refreshMatchups();
+		
 	},
 	removeMatch: function() {
 		var index = this.parentNode.getAttribute('data-index');
 		Matchups.matchups.splice(index, 1);
 		Matchups.saveMatches();
-		Matchups.resetMatchups();
-		Matchups.calcStats();
-		Matchups.renderStats();
-		Matchups.renderMatchList();
-		Matchups.calcMatchups();
-		Matchups.renderChart();
+		Matchups.refreshMatchups();
 	},
 	clearMatchList: function() {
 		UI.matchList.innerHTML = '';
@@ -447,12 +448,6 @@ var Matchups = {
 			template.querySelector('.delete-match').onclick = Matchups.removeMatch;
 			UI.matchList.insertBefore(template, UI.matchList.firstChild);
 		}
-	},
-	renderStats: function() {
-		UI.played.innerHTML = this.played;
-		UI.wins.innerHTML = this.win;
-		UI.losses.innerHTML = this.loss;
-		UI.winrate.innerHTML = Helpers.makePercent(this.win, this.played, 2)+'%';
 	},
 	clearChart: function() {
 		if(this.classMatchupChart) {
@@ -485,24 +480,9 @@ var Matchups = {
 	}
 };
 
-var renderDetail = function(deck) {
-	document.getElementById('deck-portrait').className = deck.get('heroClass');
-	UI.mainContainer.querySelector('.deck-name').innerHTML = deck.get('name');
-	UI.mainContainer.querySelector('.played').innerHTML = deck.get('played');
-	UI.mainContainer.querySelector('.wins').innerHTML = deck.get('wins');
-	UI.mainContainer.querySelector('.losses').innerHTML = deck.get('losses');
-	UI.mainContainer.querySelector('.winrate').innerHTML = deck.get('winRate');
-	if(deck.get('deckList') !== undefined) {
-		UI.cardList.list = deck.get('deckList');
-	}
-	else {
-		UI.cardList.list = [];
-	}
-	UI.cardList.renderList();
-	Matchups.getMatchups();
-	UI.loadBar.className = 'load-bar loaded';
-};
-
 Cards.returnNames();
-Decks.pullDeckList();
-Decks.pullFirstDeck();
+
+document.addEventListener('DOMContentLoaded', function(){
+	Decks.pullDeckList();
+	Decks.pullFirstDeck();
+});
